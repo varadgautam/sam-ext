@@ -1,0 +1,26 @@
+diff --git a/src/gallium/drivers/freedreno/a3xx/fd3_texture.c b/src/gallium/drivers/freedreno/a3xx/fd3_texture.c
+index 2d6ecb2..0b81cfe 100644
+--- a/src/gallium/drivers/freedreno/a3xx/fd3_texture.c
++++ b/src/gallium/drivers/freedreno/a3xx/fd3_texture.c
+@@ -224,9 +224,20 @@ fd3_sampler_view_create(struct pipe_context *pctx, struct pipe_resource *prsc,
+ 	so->base.reference.count = 1;
+ 	so->base.context = pctx;
+ 
++	/*
++	 * A3XX_TEX_CONST_0_FMT():
++	 * 0x10 NV12_UV64x32
++	 * 0x12 NV12_Y64x32
++	 * 0x13 NV12_64x32
++	 * 0x14 NV12_UV
++	 * 0x16 NV12_Y
++	 * 0x17 NV12
++	 *
++	 * the combined formats still require two samplers
++	 */
+ 	so->texconst0 =
+ 			A3XX_TEX_CONST_0_TYPE(tex_type(prsc->target)) |
+-			A3XX_TEX_CONST_0_FMT(fd3_pipe2tex(cso->format)) |
++			A3XX_TEX_CONST_0_FMT(0x16) |
+ 			A3XX_TEX_CONST_0_MIPLVLS(miplevels) |
+ 			fd3_tex_swiz(cso->format, cso->swizzle_r, cso->swizzle_g,
+ 						cso->swizzle_b, cso->swizzle_a);
